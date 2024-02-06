@@ -1,5 +1,3 @@
-// ignore_for_file: unnecessary_type_check, prefer_const_constructors, unnecessary_brace_in_string_interps, avoid_print, prefer_const_literals_to_create_immutables
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -91,14 +89,23 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.only(left: 25.0),
+          Padding(
+            padding: const EdgeInsets.only(left: 25.0),
             child: ListTile(
               leading: Icon(Icons.person, color: Colors.white),
               title: Text(
                 'Team',
                 style: TextStyle(color: Colors.white),
               ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        TeamPage(accessToken: widget.accessToken),
+                  ),
+                );
+              },
             ),
           )
         ]),
@@ -145,6 +152,25 @@ class _HomeScreenState extends State<HomeScreen> {
             )
           ],
         ),
+      ),
+    );
+  }
+}
+
+class TeamPage extends StatelessWidget {
+  final String accessToken;
+
+  TeamPage({required this.accessToken});
+
+  @override
+  Widget build(BuildContext context) {
+    // Здесь вы можете использовать accessToken для чего-то на странице команды
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Team'),
+      ),
+      body: Center(
+        child: Text('Welcome to the Team Page!'),
       ),
     );
   }

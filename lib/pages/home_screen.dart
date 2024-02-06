@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_type_check, prefer_const_constructors, unnecessary_brace_in_string_interps, avoid_print
+// ignore_for_file: unnecessary_type_check, prefer_const_constructors, unnecessary_brace_in_string_interps, avoid_print, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -53,35 +53,71 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
+        elevation: 0,
         title: Text(
           'DASHBOARD',
-          style: TextStyle(
-            color: Colors.white,
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: const Color.fromRGBO(76, 175, 80, 1),
+        leading: Builder(
+          builder: (context) => IconButton(
+            icon: const Icon(
+              Icons.menu,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              Scaffold.of(context).openDrawer();
+            },
           ),
         ),
-        backgroundColor: Colors.green,
+        actions: [],
+      ),
+      drawer: Drawer(
+        backgroundColor: Colors.green[900],
+        child: Column(children: [
+          DrawerHeader(
+              child: Padding(
+            padding: const EdgeInsets.all(50.0),
+            child: Text('CRM',
+                style: TextStyle(color: Colors.white, fontSize: 30)),
+          )),
+          const Padding(
+            padding: EdgeInsets.only(left: 25.0),
+            child: ListTile(
+              leading: Icon(Icons.home, color: Colors.white),
+              title: Text(
+                'Dashboard',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ),
+          const Padding(
+            padding: EdgeInsets.only(left: 25.0),
+            child: ListTile(
+              leading: Icon(Icons.person, color: Colors.white),
+              title: Text(
+                'Team',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          )
+        ]),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('You have successfully logged in!'),
             SizedBox(height: 20),
             Text('Hello, ${userData['user_name']}',
-                style: TextStyle(
-                  fontSize: 20,
-                )),
+                style: TextStyle(fontSize: 20)),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: startedWork
                   ? Center(
-                      child: Center(
-                        child: Text(
-                          'You started your work at ${startDayData['start']}. Have a good day!',
-                          style: TextStyle(fontSize: 20, color: Colors.brown),
-                          textAlign: TextAlign.center,
-                        ),
+                      child: Text(
+                        'You started your work at\n${startDayData['start']}.\nHave a good day!',
+                        style: TextStyle(fontSize: 20, color: Colors.brown),
+                        textAlign: TextAlign.center,
                       ),
                     )
                   : ElevatedButton(

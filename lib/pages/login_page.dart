@@ -1,21 +1,16 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
 import 'package:flutter_crm/pages/home_screen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  const LoginPage({Key? key}) : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_api
   _LoginPageState createState() => _LoginPageState();
-}
-
-//save token
-class TokenStorage {
-  static String? token;
 }
 
 class _LoginPageState extends State<LoginPage> {
@@ -69,7 +64,8 @@ class _LoginPageState extends State<LoginPage> {
 
                     var accessToken = jsonResponse['access_token'];
 
-                    TokenStorage.token = accessToken;
+                    await TokenStorage.saveToken(
+                        accessToken); // Save token to SharedPreferences
 
                     Navigator.push(
                       context,
@@ -106,5 +102,12 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
+  }
+}
+
+class TokenStorage {
+  static Future<void> saveToken(String token) async {
+    var prefs = await SharedPreferences.getInstance();
+    prefs.setString('accessToken', token);
   }
 }

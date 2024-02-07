@@ -6,7 +6,7 @@ import 'package:flutter_crm/pages/team.dart';
 import 'package:flutter_crm/pages/wiki_page.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart'; // Импортируем пакет для работы с SharedPreferences
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TokenStorage {
   static Future<String?> getToken() async {
@@ -28,25 +28,47 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    checkWorkDay();
     fetchData();
   }
 
-  Future<void> fetchData() async {
-    String? accessToken =
-        await TokenStorage.getToken();
-
-    var url = Uri.parse('http://api.stage.newcrm.projects.od.ua/api/auth/me');
-
+  Future<void> checkWorkDay() async {
+    String? accessToken = await TokenStorage.getToken();
+    var todayWorkUrl =
+        Uri.parse('http://api.stage.newcrm.projects.od.ua/api/work/today');
     var response = await http.get(
-      url,
+      todayWorkUrl,
       headers: {'Authorization': 'Bearer $accessToken'},
     );
 
     if (response.statusCode == 200) {
       var jsonResponse = json.decode(response.body);
+      if (jsonResponse != null) {
+        setState(() {
+          startedWork = true;
+          startDayData = jsonResponse;
+        });
+        print(startDayData['data']['start']);
+      }
+    } else {
+      print(
+          'Failed to fetch today\'s work data. Status code: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    }
+  }
+
+  Future<void> fetchData() async {
+    String? accessToken = await TokenStorage.getToken();
+    var userDataUrl =
+        Uri.parse('http://api.stage.newcrm.projects.od.ua/api/auth/me');
+    var response = await http.get(
+      userDataUrl,
+      headers: {'Authorization': 'Bearer $accessToken'},
+    );
+    if (response.statusCode == 200) {
+      var jsonResponse = json.decode(response.body);
       setState(() {
         userData = jsonResponse['data'];
-        print('Type of userData: ${userData.runtimeType}');
       });
     } else {
       print('Failed to fetch user data. Status code: ${response.statusCode}');
@@ -142,20 +164,18 @@ class _HomeScreenState extends State<HomeScreen> {
               child: startedWork
                   ? Center(
                       child: Text(
-                        'You started your work at\n${startDayData['start']}.\nHave a good day!',
+                        'You started your work at\n${startDayData['data']['start']}.\nHave a good day!',
                         style: TextStyle(fontSize: 20, color: Colors.brown),
                         textAlign: TextAlign.center,
                       ),
                     )
                   : ElevatedButton(
                       onPressed: () async {
-                        String? accessToken = await TokenStorage
-                            .getToken(); // Получаем токен из SharedPreferences
+                        String? accessToken = await TokenStorage.getToken();
                         var url = Uri.parse(
                             'http://api.stage.newcrm.projects.od.ua/api/work/start');
-                        var response = await http.post(url, headers: {
-                          'Authorization': 'Bearer $accessToken'
-                        });
+                        var response = await http.post(url,
+                            headers: {'Authorization': 'Bearer $accessToken'});
                         if (response.statusCode == 201) {
                           setState(() {
                             startedWork = true;

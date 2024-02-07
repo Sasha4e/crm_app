@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_crm/pages/login_page.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'user_details_screen.dart'; // Импортируйте новый файл
@@ -45,6 +46,10 @@ class _TeamPageState extends State<TeamPage> {
     } else {
       print('Failed to fetch users data. Status code: ${response.statusCode}');
       print('Response body: ${response.body}');
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage()),
+      );
     }
   }
 

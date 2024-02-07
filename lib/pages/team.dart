@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'user_details_screen.dart'; // Импортируйте новый файл
 
 class TeamPage extends StatefulWidget {
   final String accessToken;
@@ -22,7 +24,7 @@ class _TeamPageState extends State<TeamPage> {
 
   Future<void> fetchData() async {
     var url = Uri.parse(
-        'http://api.stage.newcrm.projects.od.ua//api/users?roles[]=user&roles[]=HR');
+        'http://api.stage.newcrm.projects.od.ua/api/users?roles[]=user&roles[]=HR');
 
     var response = await http.get(
       url,
@@ -32,7 +34,7 @@ class _TeamPageState extends State<TeamPage> {
     if (response.statusCode == 200) {
       var jsonResponse = json.decode(response.body);
       setState(() {
-        usersData = jsonResponse;
+        usersData = jsonResponse['data'];
       });
     } else {
       print('Failed to fetch users data. Status code: ${response.statusCode}');
@@ -50,9 +52,21 @@ class _TeamPageState extends State<TeamPage> {
         child: ListView.builder(
           itemCount: usersData.length,
           itemBuilder: (BuildContext context, int index) {
-            return ListTile(
-              title: Text(usersData[index]['name']),
-              subtitle: Text(usersData[index]['email']),
+            return Card(
+              child: ListTile(
+                title: Text(usersData[index]['name']),
+                subtitle: Text(usersData[index]['user_name']),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => UserDetailsScreen(
+                        userData: usersData[index],
+                      ),
+                    ),
+                  );
+                },
+              ),
             );
           },
         ),

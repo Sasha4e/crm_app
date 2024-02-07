@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_crm/pages/team.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+
 
 class TokenStorage {
   static String? token;
@@ -157,21 +160,4 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class TeamPage extends StatelessWidget {
-  final String accessToken;
 
-  TeamPage({required this.accessToken});
-
-  @override
-  Widget build(BuildContext context) {
-    // Здесь вы можете использовать accessToken для чего-то на странице команды
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Team'),
-      ),
-      body: Center(
-        child: Text('Welcome to the Team Page!'),
-      ),
-    );
-  }
-}

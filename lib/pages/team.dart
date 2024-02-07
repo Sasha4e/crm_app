@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'user_details_screen.dart'; // Импортируйте новый файл
 
 class TeamPage extends StatefulWidget {

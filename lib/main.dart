@@ -2,9 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_crm/pages/login_page.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'pages/home_screen.dart';
+
 
 void main() {
   runApp(const MyApp());

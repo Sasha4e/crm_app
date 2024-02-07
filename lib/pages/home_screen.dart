@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_crm/pages/login_page.dart';
 import 'package:flutter_crm/pages/team.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -47,6 +48,10 @@ class _HomeScreenState extends State<HomeScreen> {
     } else {
       print('Failed to fetch user data. Status code: ${response.statusCode}');
       print('Response body: ${response.body}');
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage()),
+      );
     }
   }
 

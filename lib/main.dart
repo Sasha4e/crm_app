@@ -1,15 +1,18 @@
-// ignore_for_file: avoid_print, use_build_context_synchronously, prefer_const_constructors
-
 import 'package:flutter/material.dart';
-import 'package:flutter_crm/pages/login_page.dart';
+import 'package:flutter_crm/pages/home_screen.dart';
+import 'package:flutter_crm/pages/login_page.dart'; // Предполагается, что у вас есть файл с LoginPage
+import 'package:shared_preferences/shared_preferences.dart';
 
-
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  String? accessToken = await TokenStorage.getToken();
+  runApp(MyApp(accessToken: accessToken));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final String? accessToken;
+
+  const MyApp({Key? key, this.accessToken}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,8 +22,16 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const LoginPage(),
+      home: accessToken != null
+          ? HomeScreen(accessToken: accessToken!)
+          : LoginPage(),
     );
   }
 }
 
+class TokenStorage {
+  static Future<String?> getToken() async {
+    var prefs = await SharedPreferences.getInstance();
+    return prefs.getString('accessToken');
+  }
+}

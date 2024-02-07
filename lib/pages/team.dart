@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_crm/pages/login_page.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'user_details_screen.dart'; // Импортируйте новый файл
-import 'package:shared_preferences/shared_preferences.dart'; // Импортируйте пакет для работы с SharedPreferences
+import 'user_details_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TeamPage extends StatefulWidget {
   @override
@@ -28,7 +28,7 @@ class _TeamPageState extends State<TeamPage> {
 
   Future<void> fetchData() async {
     String? accessToken =
-        await TokenStorage.getToken(); // Получаем токен из SharedPreferences
+        await TokenStorage.getToken(); 
 
     var url = Uri.parse(
         'http://api.stage.newcrm.projects.od.ua/api/users?roles[]=user&roles[]=HR');

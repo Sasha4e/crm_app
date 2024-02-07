@@ -1,6 +1,9 @@
+// ignore_for_file: prefer_const_constructors, use_build_context_synchronously, avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:flutter_crm/pages/login_page.dart';
 import 'package:flutter_crm/pages/team.dart';
+import 'package:flutter_crm/pages/wiki_page.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart'; // Импортируем пакет для работы с SharedPreferences
@@ -30,7 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> fetchData() async {
     String? accessToken =
-        await TokenStorage.getToken(); // Получаем токен из SharedPreferences
+        await TokenStorage.getToken();
 
     var url = Uri.parse('http://api.stage.newcrm.projects.od.ua/api/auth/me');
 
@@ -87,14 +90,23 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Text('CRM',
                 style: TextStyle(color: Colors.white, fontSize: 30)),
           )),
-          const Padding(
+          Padding(
             padding: EdgeInsets.only(left: 25.0),
             child: ListTile(
-              leading: Icon(Icons.home, color: Colors.white),
+              leading: Icon(Icons.question_mark, color: Colors.white),
               title: Text(
-                'Dashboard',
+                'Wiki',
                 style: TextStyle(color: Colors.white),
               ),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => WikiPage(),
+                  ),
+                );
+              },
             ),
           ),
           Padding(
@@ -106,6 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: TextStyle(color: Colors.white),
               ),
               onTap: () {
+                Navigator.pop(context);
                 Navigator.push(
                   context,
                   MaterialPageRoute(

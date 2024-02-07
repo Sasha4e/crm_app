@@ -71,7 +71,7 @@ class _LoginPageState extends State<LoginPage> {
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                              HomeScreen(accessToken: accessToken)),
+                              HomeScreen()),
                     );
 
                     print('Access Token: $accessToken');

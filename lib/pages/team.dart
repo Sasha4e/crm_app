@@ -2,14 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'user_details_screen.dart'; // Импортируйте новый файл
+import 'package:shared_preferences/shared_preferences.dart'; // Импортируйте пакет для работы с SharedPreferences
 
 class TeamPage extends StatefulWidget {
-  final String accessToken;
-
-  TeamPage({required this.accessToken});
-
   @override
   _TeamPageState createState() => _TeamPageState();
+}
+
+class TokenStorage {
+  static Future<String?> getToken() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('accessToken');
+  }
 }
 
 class _TeamPageState extends State<TeamPage> {
@@ -22,12 +26,15 @@ class _TeamPageState extends State<TeamPage> {
   }
 
   Future<void> fetchData() async {
+    String? accessToken =
+        await TokenStorage.getToken(); // Получаем токен из SharedPreferences
+
     var url = Uri.parse(
         'http://api.stage.newcrm.projects.od.ua/api/users?roles[]=user&roles[]=HR');
 
     var response = await http.get(
       url,
-      headers: {'Authorization': 'Bearer ${widget.accessToken}'},
+      headers: {'Authorization': 'Bearer $accessToken'},
     );
 
     if (response.statusCode == 200) {

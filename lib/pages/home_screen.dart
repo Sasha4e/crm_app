@@ -3,18 +3,16 @@ import 'package:flutter_crm/pages/login_page.dart';
 import 'package:flutter_crm/pages/team.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
-
+import 'package:shared_preferences/shared_preferences.dart'; // Импортируем пакет для работы с SharedPreferences
 
 class TokenStorage {
-  static String? token;
+  static Future<String?> getToken() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('accessToken');
+  }
 }
 
 class HomeScreen extends StatefulWidget {
-  final String accessToken;
-
-  HomeScreen({required this.accessToken});
-
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -31,18 +29,20 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> fetchData() async {
+    String? accessToken =
+        await TokenStorage.getToken(); // Получаем токен из SharedPreferences
+
     var url = Uri.parse('http://api.stage.newcrm.projects.od.ua/api/auth/me');
 
     var response = await http.get(
       url,
-      headers: {'Authorization': 'Bearer ${widget.accessToken}'},
+      headers: {'Authorization': 'Bearer $accessToken'},
     );
 
     if (response.statusCode == 200) {
       var jsonResponse = json.decode(response.body);
       setState(() {
         userData = jsonResponse['data'];
-
         print('Type of userData: ${userData.runtimeType}');
       });
     } else {
@@ -109,8 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>
-                        TeamPage(accessToken: widget.accessToken),
+                    builder: (context) => TeamPage(),
                   ),
                 );
               },
@@ -137,10 +136,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     )
                   : ElevatedButton(
                       onPressed: () async {
+                        String? accessToken = await TokenStorage
+                            .getToken(); // Получаем токен из SharedPreferences
                         var url = Uri.parse(
                             'http://api.stage.newcrm.projects.od.ua/api/work/start');
                         var response = await http.post(url, headers: {
-                          'Authorization': 'Bearer ${widget.accessToken}'
+                          'Authorization': 'Bearer $accessToken'
                         });
                         if (response.statusCode == 201) {
                           setState(() {
@@ -164,5 +165,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
-

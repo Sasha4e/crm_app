@@ -158,16 +158,34 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             SizedBox(height: 20),
             Text('Hello, ${userData['user_name']}',
-                style: TextStyle(fontSize: 20)),
+                style: TextStyle(
+                    fontSize: 25,
+                    color: const Color.fromARGB(255, 1, 61, 32),
+                    fontWeight: FontWeight.bold)),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: startedWork
                   ? Center(
-                      child: Text(
-                        'You started your work at\n${startDayData['data']['start']}.\nHave a good day!',
-                        style: TextStyle(fontSize: 20, color: Colors.brown),
-                        textAlign: TextAlign.center,
+                      child: Column(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.only(bottom: 20.0),
+                            child: Text(
+                              'You started your work\n today at ${startDayData['data']['start'].split(' ')[1]}.',
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  color: const Color.fromARGB(255, 56, 21, 8)),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          Text('Have a good day!',
+                              style: TextStyle(
+                                  fontSize: 25,
+                                  color: const Color.fromARGB(255, 1, 61, 32),
+                                  fontWeight: FontWeight.bold)),
+                        ],
                       ),
+                      
                     )
                   : ElevatedButton(
                       onPressed: () async {

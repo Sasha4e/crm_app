@@ -1,12 +1,11 @@
+// ignore_for_file: use_build_context_synchronously, prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:flutter_crm/api/api_interceptors.dart';
 import 'package:flutter_crm/pages/home_screen.dart';
-import 'package:flutter_crm/pages/login_page.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_crm/storage/token_storage.dart';
-import 'package:flutter_crm/api/api_interceptors.dart';
-// Импортируем файл с интерсепторами
+
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -57,7 +56,7 @@ class _LoginPageState extends State<LoginPage> {
                   };
 
                   var response = await ApiClient.post('auth/login',
-                      data); // Используем ApiClient.post вместо http.post
+                      data); 
 
                   if (response.statusCode == 200) {
                     var jsonResponse = json.decode(response.body);
@@ -65,7 +64,7 @@ class _LoginPageState extends State<LoginPage> {
                     var accessToken = jsonResponse['access_token'];
 
                     await TokenStorage.saveToken(
-                        accessToken); // Save token to SharedPreferences
+                        accessToken);
 
                     Navigator.pushReplacement(
                       context,

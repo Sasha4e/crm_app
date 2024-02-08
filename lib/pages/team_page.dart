@@ -1,17 +1,16 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_crm/pages/login_page.dart';
-import 'package:http/http.dart' as http;
+// ignore_for_file: use_build_context_synchronously, use_key_in_widget_constructors, library_private_types_in_public_api
+
 import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_crm/api/api_interceptors.dart';
+import 'package:flutter_crm/pages/login_page.dart';
 import 'user_details_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_crm/storage/token_storage.dart';
 
 class TeamPage extends StatefulWidget {
   @override
   _TeamPageState createState() => _TeamPageState();
 }
-
-
 
 class _TeamPageState extends State<TeamPage> {
   late List<dynamic> usersData = [];
@@ -23,16 +22,8 @@ class _TeamPageState extends State<TeamPage> {
   }
 
   Future<void> fetchData() async {
-    String? accessToken =
-        await TokenStorage.getToken(); 
 
-    var url = Uri.parse(
-        'http://api.stage.newcrm.projects.od.ua/api/users?roles[]=user&roles[]=HR');
-
-    var response = await http.get(
-      url,
-      headers: {'Authorization': 'Bearer $accessToken'},
-    );
+    var response = await ApiClient.get('users?roles[]=user&roles[]=HR');
 
     if (response.statusCode == 200) {
       var jsonResponse = json.decode(response.body);

@@ -1,10 +1,9 @@
+// ignore_for_file: prefer_const_constructors, use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_crm/pages/login_page.dart';
 import 'package:flutter_crm/pages/team_page.dart';
 import 'package:flutter_crm/pages/wiki_page.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_crm/storage/token_storage.dart';
 
 
@@ -65,7 +64,7 @@ class CustomDrawer extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: SizedBox(), // виджет для разделения
+            child: SizedBox(), 
           ),
           Padding(
             padding: const EdgeInsets.only(left: 25.0, bottom: 16.0),
@@ -78,7 +77,7 @@ class CustomDrawer extends StatelessWidget {
               onTap: () async {
                 Navigator.pop(context);
                 await TokenStorage
-                    .clearToken(); // Очистить токен из SharedPreferences
+                    .clearToken(); 
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(

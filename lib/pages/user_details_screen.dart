@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 
 class UserDetailsScreen extends StatelessWidget {
@@ -16,7 +18,10 @@ class UserDetailsScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             CircleAvatar(
-              backgroundImage: NetworkImage(userData['image']),
+              backgroundImage: userData['image'] != null
+                  ? NetworkImage(userData['image'])
+                  : NetworkImage(
+                      'http://stage.newcrm.projects.od.ua/img/avatar-placeholder.d45784a3.jpg'),
               radius: 60,
             ),
             SizedBox(height: 20),

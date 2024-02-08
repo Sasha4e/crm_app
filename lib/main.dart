@@ -1,8 +1,7 @@
-// ignore_for_file: avoid_print, use_build_context_synchronously, prefer_const_constructors
-
 import 'package:flutter/material.dart';
+import 'package:flutter_crm/pages/home_screen.dart'; 
 import 'package:flutter_crm/pages/login_page.dart';
-
+import 'package:flutter_crm/storage/token_storage.dart'; 
 
 void main() {
   runApp(const MyApp());
@@ -19,8 +18,26 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const LoginPage(),
+      home: FutureBuilder<bool>(
+        future: _checkToken(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return CircularProgressIndicator();
+          } else {
+            if (snapshot.data == true) {
+              return HomeScreen();
+            } else {
+              return const LoginPage();
+            }
+          }
+        },
+      ),
     );
   }
-}
 
+  Future<bool> _checkToken() async {
+    // наличие токена
+    String? token = await TokenStorage.getToken();
+    return token != null;
+  }
+}

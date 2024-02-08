@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, use_build_context_synchronously
 
 import 'dart:convert';
 
@@ -6,9 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_crm/api/api_interceptors.dart';
 import 'package:flutter_crm/components/drawer.dart';
 import 'package:flutter_crm/pages/login_page.dart';
-import 'package:flutter_crm/pages/team_page.dart';
-import 'package:flutter_crm/pages/wiki_page.dart';
-import 'package:flutter_crm/storage/token_storage.dart';
 
 class HomeScreen extends StatefulWidget {
   @override

@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:flutter_crm/pages/home_screen.dart';
@@ -67,7 +67,7 @@ class _LoginPageState extends State<LoginPage> {
                     await TokenStorage.saveToken(
                         accessToken); // Save token to SharedPreferences
 
-                    Navigator.push(
+                    Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
                           builder: (context) =>

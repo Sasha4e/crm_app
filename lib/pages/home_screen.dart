@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_crm/components/drawer.dart';
 import 'package:flutter_crm/pages/login_page.dart';
-import 'package:flutter_crm/pages/team.dart';
+import 'package:flutter_crm/pages/team_page.dart';
 import 'package:flutter_crm/pages/wiki_page.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';

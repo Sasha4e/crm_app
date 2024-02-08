@@ -25,11 +25,8 @@ class _LoginPageState extends State<LoginPage> {
       appBar: AppBar(
         title: const Text(
           'UFO engineering',
-          style: TextStyle(
-            color: Colors.white,
-          ),
         ),
-        backgroundColor: Colors.green,
+        
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

@@ -65,7 +65,7 @@ class _WikiPageState extends State<WikiPage> {
               title: Text(article['title'],
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
               subtitle: Text(article['author']['user_name']
-                  .toString()), // или любое другое поле для отображения
+                  .toString()), 
             ),
           );
         },

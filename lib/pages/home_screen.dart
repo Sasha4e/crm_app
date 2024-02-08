@@ -74,9 +74,9 @@ class _HomeScreenState extends State<HomeScreen> {
         elevation: 0,
         title: Text(
           'DASHBOARD',
-          style: TextStyle(color: Colors.white),
+          
         ),
-        backgroundColor: const Color.fromRGBO(76, 175, 80, 1),
+        
         leading: Builder(
           builder: (context) => IconButton(
             icon: const Icon(

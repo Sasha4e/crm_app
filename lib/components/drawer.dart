@@ -13,7 +13,7 @@ class CustomDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      backgroundColor: Colors.green[900],
+      backgroundColor: Color(0xFF030332),
       child: Column(
         children: [
           DrawerHeader(
@@ -31,7 +31,7 @@ class CustomDrawer extends StatelessWidget {
               leading: Icon(Icons.question_mark, color: Colors.white),
               title: Text(
                 'Wiki',
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: Colors.white), 
               ),
               onTap: () {
                 Navigator.pop(context);
@@ -43,6 +43,7 @@ class CustomDrawer extends StatelessWidget {
                 );
               },
             ),
+
           ),
           Padding(
             padding: const EdgeInsets.only(left: 25.0),

@@ -7,11 +7,11 @@ import 'package:flutter_crm/pages/login_page.dart';
 
 class ApiInterceptor {
   static Future<http.Response> intercept(http.Request request) async {
-    // Добавляем токен к каждому запросу
+    // adding token to every request
     String? accessToken = await TokenStorage.getToken();
     request.headers['Authorization'] = 'Bearer $accessToken';
 
-    // Используем http.Client
+    // using http.Client
     var client = http.Client();
     var response = await client.send(request);
 

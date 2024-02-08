@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_crm/pages/home_screen.dart'; 
 import 'package:flutter_crm/pages/login_page.dart';
 import 'package:flutter_crm/storage/token_storage.dart'; 
+import 'themes/app_theme.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,9 +16,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Authentication App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: AppTheme.lightTheme,
       home: FutureBuilder<bool>(
         future: _checkToken(), 
         builder: (context, snapshot) {

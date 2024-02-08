@@ -1,15 +1,14 @@
-// ignore_for_file: prefer_const_constructors, use_build_context_synchronously, avoid_print
+// ignore_for_file: prefer_const_constructors
+
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_crm/api/api_interceptors.dart';
 import 'package:flutter_crm/components/drawer.dart';
 import 'package:flutter_crm/pages/login_page.dart';
 import 'package:flutter_crm/pages/team_page.dart';
 import 'package:flutter_crm/pages/wiki_page.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_crm/storage/token_storage.dart';
-
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -24,55 +23,50 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    checkWorkDay();
     fetchData();
   }
 
-  Future<void> checkWorkDay() async {
-    String? accessToken = await TokenStorage.getToken();
-    var todayWorkUrl =
-        Uri.parse('http://api.stage.newcrm.projects.od.ua/api/work/today');
-    var response = await http.get(
-      todayWorkUrl,
-      headers: {'Authorization': 'Bearer $accessToken'},
-    );
-
-    if (response.statusCode == 200) {
-      var jsonResponse = json.decode(response.body);
-      if (jsonResponse != null) {
+  Future<void> fetchData() async {
+    try {
+      var response = await ApiClient.get('auth/me');
+      if (response.statusCode == 200) {
+        var jsonResponse = json.decode(response.body);
         setState(() {
-          startedWork = true;
-          startDayData = jsonResponse;
+          userData = jsonResponse['data'];
         });
-        print(startDayData['data']['start']);
+        await checkWorkDay();
+      } else {
+        print('Failed to fetch user data. Status code: ${response.statusCode}');
+        print('Response body: ${response.body}');
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => LoginPage()),
+        );
       }
-    } else {
-      print(
-          'Failed to fetch today\'s work data. Status code: ${response.statusCode}');
-      print('Response body: ${response.body}');
+    } catch (e) {
+      print('Error: $e');
     }
   }
 
-  Future<void> fetchData() async {
-    String? accessToken = await TokenStorage.getToken();
-    var userDataUrl =
-        Uri.parse('http://api.stage.newcrm.projects.od.ua/api/auth/me');
-    var response = await http.get(
-      userDataUrl,
-      headers: {'Authorization': 'Bearer $accessToken'},
-    );
-    if (response.statusCode == 200) {
-      var jsonResponse = json.decode(response.body);
-      setState(() {
-        userData = jsonResponse['data'];
-      });
-    } else {
-      print('Failed to fetch user data. Status code: ${response.statusCode}');
-      print('Response body: ${response.body}');
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => LoginPage()),
-      );
+  Future<void> checkWorkDay() async {
+    try {
+      var response = await ApiClient.get('work/today');
+      if (response.statusCode == 200) {
+        var jsonResponse = json.decode(response.body);
+        if (jsonResponse != null) {
+          setState(() {
+            startedWork = true;
+            startDayData = jsonResponse;
+          });
+          print(startDayData['data']['start']);
+        }
+      } else {
+        print(
+            'Failed to fetch today\'s work data. Status code: ${response.statusCode}');
+        print('Response body: ${response.body}');
+      }
+    } catch (e) {
+      print('Error: $e');
     }
   }
 
@@ -133,26 +127,25 @@ class _HomeScreenState extends State<HomeScreen> {
                                   fontWeight: FontWeight.bold)),
                         ],
                       ),
-                      
                     )
                   : ElevatedButton(
                       onPressed: () async {
-                        String? accessToken = await TokenStorage.getToken();
-                        var url = Uri.parse(
-                            'http://api.stage.newcrm.projects.od.ua/api/work/start');
-                        var response = await http.post(url,
-                            headers: {'Authorization': 'Bearer $accessToken'});
-                        if (response.statusCode == 201) {
-                          setState(() {
-                            startedWork = true;
-                          });
-                          var jsonResponse = json.decode(response.body);
-                          startDayData = jsonResponse['data'];
-                          print('response: ${startDayData}');
-                        } else {
-                          print(
-                              'Failed to fetch user data. Status code: ${response.statusCode}');
-                          print('Response body: ${response.body}');
+                        try {
+                          var response = await ApiClient.post('work/start', {});
+                          if (response.statusCode == 201) {
+                            setState(() {
+                              startedWork = true;
+                            });
+                            var jsonResponse = json.decode(response.body);
+                            startDayData = jsonResponse['data'];
+                            print('response: ${startDayData}');
+                          } else {
+                            print(
+                                'Failed to fetch user data. Status code: ${response.statusCode}');
+                            print('Response body: ${response.body}');
+                          }
+                        } catch (e) {
+                          print('Error: $e');
                         }
                       },
                       child: Text('Start day'),

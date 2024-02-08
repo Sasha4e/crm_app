@@ -1,12 +1,12 @@
-// ignore_for_file: prefer_const_constructors, use_build_context_synchronously
-
 import 'package:flutter/material.dart';
+import 'package:flutter_crm/api/api_interceptors.dart';
 import 'package:flutter_crm/pages/home_screen.dart';
+import 'package:flutter_crm/pages/login_page.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_crm/storage/token_storage.dart';
-
+import 'package:flutter_crm/api/api_interceptors.dart';
+// Импортируем файл с интерсепторами
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -56,10 +56,8 @@ class _LoginPageState extends State<LoginPage> {
                     'pass_word': _passwordController.text,
                   };
 
-                  var url = Uri.parse(
-                      'http://api.stage.newcrm.projects.od.ua/api/auth/login');
-
-                  var response = await http.post(url, body: data);
+                  var response = await ApiClient.post('auth/login',
+                      data); // Используем ApiClient.post вместо http.post
 
                   if (response.statusCode == 200) {
                     var jsonResponse = json.decode(response.body);
@@ -72,8 +70,7 @@ class _LoginPageState extends State<LoginPage> {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                          builder: (context) =>
-                              HomeScreen()),
+                          builder: (context) => HomeScreen()),
                     );
 
                     print('Access Token: $accessToken');
@@ -106,10 +103,3 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
-
-// class TokenStorage {
-//   static Future<void> saveToken(String token) async {
-//     var prefs = await SharedPreferences.getInstance();
-//     prefs.setString('accessToken', token);
-//   }
-// }

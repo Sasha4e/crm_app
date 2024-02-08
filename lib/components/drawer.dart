@@ -5,7 +5,7 @@ import 'package:flutter_crm/pages/wiki_page.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:flutter_crm/storage/token_storage.dart';
 
 
 class CustomDrawer extends StatelessWidget {
@@ -94,14 +94,3 @@ class CustomDrawer extends StatelessWidget {
   }
 }
 
-class TokenStorage {
-  static Future<String?> getToken() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('accessToken');
-  }
-
-  static Future<void> clearToken() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.remove('accessToken');
-  }
-}

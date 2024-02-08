@@ -5,6 +5,8 @@ import 'package:flutter_crm/pages/home_screen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_crm/storage/token_storage.dart';
+
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -105,9 +107,9 @@ class _LoginPageState extends State<LoginPage> {
   }
 }
 
-class TokenStorage {
-  static Future<void> saveToken(String token) async {
-    var prefs = await SharedPreferences.getInstance();
-    prefs.setString('accessToken', token);
-  }
-}
+// class TokenStorage {
+//   static Future<void> saveToken(String token) async {
+//     var prefs = await SharedPreferences.getInstance();
+//     prefs.setString('accessToken', token);
+//   }
+// }

@@ -8,13 +8,8 @@ import 'package:flutter_crm/pages/wiki_page.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_crm/storage/token_storage.dart';
 
-class TokenStorage {
-  static Future<String?> getToken() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('accessToken');
-  }
-}
 
 class HomeScreen extends StatefulWidget {
   @override

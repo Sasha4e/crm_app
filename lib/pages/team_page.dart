@@ -4,18 +4,14 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'user_details_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_crm/storage/token_storage.dart';
 
 class TeamPage extends StatefulWidget {
   @override
   _TeamPageState createState() => _TeamPageState();
 }
 
-class TokenStorage {
-  static Future<String?> getToken() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('accessToken');
-  }
-}
+
 
 class _TeamPageState extends State<TeamPage> {
   late List<dynamic> usersData = [];

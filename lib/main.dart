@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: FutureBuilder<bool>(
-        future: _checkToken(),
+        future: _checkToken(), 
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return CircularProgressIndicator();
@@ -38,6 +38,6 @@ class MyApp extends StatelessWidget {
   Future<bool> _checkToken() async {
     // наличие токена
     String? token = await TokenStorage.getToken();
-    return token != null;
+    return token != null; 
   }
 }

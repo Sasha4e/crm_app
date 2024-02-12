@@ -105,17 +105,31 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: startDayData['data'] != null
-                        ? Text(
-                            startedWork
-                                ? 'You started your work\n today at ${startDayData['data']['start'].split(' ')[1]}.'
-                                : 'Loading... ${startDayData['data']}', // Отображение заглушки пока данные загружаются
-                            style: TextStyle(
-                                fontSize: 20,
-                                color: const Color.fromARGB(255, 56, 21, 8)),
-                            textAlign: TextAlign.center,
-                          )
-                        : Container(), // Индикатор загрузки вместо текста
+                    child: Column(
+                      children: [
+                        startDayData['data'] != null
+                            ? Container(
+                                margin: EdgeInsets.only(bottom: 10.0),
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      'You started your work\n today at ${startDayData['data']['start'].split(' ')[1]}.',
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          color: const Color.fromARGB(
+                                              255, 56, 21, 8)),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: () {},
+                                      child: Text('End day'),
+                                    )
+                                  ],
+                                ),
+                              )
+                            : Container(),
+                      ],
+                    ),
                   ),
                   if (startDayData['data'] == null)
                     ElevatedButton(

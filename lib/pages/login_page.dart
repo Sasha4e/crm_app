@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_crm/api/api_interceptors.dart';
-import 'package:flutter_crm/pages/home_screen.dart';
+import 'package:flutter_crm/pages/home_page.dart';
 import 'dart:convert';
 import 'package:flutter_crm/storage/token_storage.dart';
 

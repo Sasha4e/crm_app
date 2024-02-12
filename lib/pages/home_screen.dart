@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, use_build_context_synchronously
+// ignore_for_file: prefer_const_constructors
 
 import 'dart:convert';
 
@@ -30,6 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
         var jsonResponse = json.decode(response.body);
         setState(() {
           userData = jsonResponse['data'];
+          startedWork = true;
         });
         await checkWorkDay();
       } else {
@@ -50,12 +51,12 @@ class _HomeScreenState extends State<HomeScreen> {
       var response = await ApiClient.get('work/today');
       if (response.statusCode == 200) {
         var jsonResponse = json.decode(response.body);
-        if (jsonResponse != null) {
+        if (jsonResponse['data'] != null) {
           setState(() {
-            startedWork = true;
             startDayData = jsonResponse;
+            startedWork = true;
           });
-          print(startDayData['data']['start']);
+          print(startDayData['data']);
         }
       } else {
         print(
@@ -73,9 +74,8 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         elevation: 0,
         title: Text(
-          'DASHBOARD',
+          'Dashboard',
         ),
-        
         leading: Builder(
           builder: (context) => IconButton(
             icon: const Icon(
@@ -93,47 +93,42 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(height: 20),
-            Text('Hello, ${userData['user_name']}',
-                style: TextStyle(
-                    fontSize: 25,
-                    color: const Color.fromARGB(255, 1, 61, 32),
-                    fontWeight: FontWeight.bold)),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: startedWork
-                  ? Center(
-                      child: Column(
-                        children: [
-                          Container(
-                            padding: EdgeInsets.only(bottom: 20.0),
-                            child: Text(
-                              'You started your work\n today at ${startDayData['data']['start'].split(' ')[1]}.',
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  color: const Color.fromARGB(255, 56, 21, 8)),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          Text('Have a good day!',
-                              style: TextStyle(
-                                  fontSize: 25,
-                                  color: const Color.fromARGB(255, 1, 61, 32),
-                                  fontWeight: FontWeight.bold)),
-                        ],
-                      ),
-                    )
-                  : ElevatedButton(
+          children: startedWork
+              ? [
+                  SizedBox(height: 20),
+                  Text(
+                    'Hello, ${userData['user_name']}',
+                    style: TextStyle(
+                        fontSize: 25,
+                        color: const Color.fromARGB(255, 1, 61, 32),
+                        fontWeight: FontWeight.bold),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: startDayData['data'] != null
+                        ? Text(
+                            startedWork
+                                ? 'You started your work\n today at ${startDayData['data']['start'].split(' ')[1]}.'
+                                : 'Loading... ${startDayData['data']}', // Отображение заглушки пока данные загружаются
+                            style: TextStyle(
+                                fontSize: 20,
+                                color: const Color.fromARGB(255, 56, 21, 8)),
+                            textAlign: TextAlign.center,
+                          )
+                        : Container(), // Индикатор загрузки вместо текста
+                  ),
+                  if (startDayData['data'] == null)
+                    ElevatedButton(
                       onPressed: () async {
                         try {
                           var response = await ApiClient.post('work/start', {});
                           if (response.statusCode == 201) {
                             setState(() {
-                              startedWork = true;
+                              startDayData = json.decode(response.body)['data'];
                             });
                             var jsonResponse = json.decode(response.body);
                             startDayData = jsonResponse['data'];
+                            checkWorkDay();
                             print('response: ${startDayData}');
                           } else {
                             print(
@@ -146,8 +141,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                       child: Text('Start day'),
                     ),
-            )
-          ],
+                ]
+              : [CircularProgressIndicator()],
         ),
       ),
     );

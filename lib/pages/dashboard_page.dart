@@ -5,7 +5,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_crm/api/api_interceptors.dart';
 import 'package:flutter_crm/components/drawer.dart';
+import 'package:flutter_crm/pages/end_day_page.dart';
 import 'package:flutter_crm/pages/login_page.dart';
+import 'package:flutter_crm/storage/user_storage.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -33,6 +35,8 @@ class _HomeScreenState extends State<HomeScreen> {
           startedWork = true;
         });
         await checkWorkDay();
+        await UserStorage.saveUserData(userData);
+        print('UserData: ${UserStorage.getUserData()}');
       } else {
         print('Failed to fetch user data. Status code: ${response.statusCode}');
         print('Response body: ${response.body}');
@@ -121,7 +125,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                       textAlign: TextAlign.center,
                                     ),
                                     ElevatedButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    EndDay()));
+                                      },
                                       child: Text('End day'),
                                     )
                                   ],

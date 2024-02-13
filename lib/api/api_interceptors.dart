@@ -31,7 +31,7 @@ class ApiErrorHandler {
       );
     } else if (response.statusCode != 200) {
       print('Error: ${response.statusCode}');
-      print('Response body: ${response.body}');
+      // print('Response body: ${response.body}');
     }
   }
 }

@@ -13,14 +13,28 @@ class EndDay extends StatefulWidget {
 
 class _EndDayState extends State<EndDay> {
   var userProjects = [];
-  var isProjectChosen = false;
+  bool isProjectChosen = false;
   var selectedProjectId;
+  bool isTaskSelected = false;
+  late FocusNode _textFieldFocusNode;
+  bool startedWork = false;
+  late Map<String, dynamic> startDayData = {};
 
   @override
   void initState() {
     super.initState();
+    _textFieldFocusNode = FocusNode();
     fetchData();
+    checkAddedTasks();
   }
+
+  void dispose() {
+    _textFieldFocusNode.dispose();
+    super.dispose();
+  }
+
+  TextEditingController _textEditingController = TextEditingController();
+  TextEditingController _textHoursController = TextEditingController();
 
   Future<void> fetchData() async {
     try {
@@ -33,7 +47,6 @@ class _EndDayState extends State<EndDay> {
 
         if (response.statusCode == 200) {
           var jsonResponse = json.decode(response.body);
-          print(jsonResponse['data']);
 
           setState(() {
             userProjects = jsonResponse['data'];
@@ -50,54 +63,105 @@ class _EndDayState extends State<EndDay> {
     }
   }
 
+  Future<void> checkAddedTasks() async {
+    try {
+      var response = await ApiClient.get('work/today');
+      if (response.statusCode == 200) {
+        var jsonResponse = json.decode(response.body);
+        if (jsonResponse['data'] != null) {
+          setState(() {
+            startDayData = jsonResponse;
+            startedWork = true;
+          });
+          print(startDayData['data']['reports']);
+        }
+      } else {
+        print(
+            'Failed to fetch today\'s work data. Status code: ${response.statusCode}');
+        print('Response body: ${response.body}');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('End day')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: DropdownButton<String>(
-                isExpanded: true,
-                hint: Text('Select Project'),
-                value: selectedProjectId,
-                onChanged: (String? projectId) {
-                  setState(() {
-                    selectedProjectId = projectId!;
-                  });
-                },
-                selectedItemBuilder: (BuildContext context) {
-                  return userProjects.map<Widget>((project) {
-                    return SizedBox(
-                      width: MediaQuery.of(context).size.width -
-                          40, // устанавливаем желаемую ширину
-                      child: Text(
-                        project['project']['name'],
-                        overflow: TextOverflow.ellipsis,
+      body: SingleChildScrollView(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  margin: EdgeInsets.only(bottom: 40),
+                  child: DropdownButton<String>(
+                    isExpanded: true,
+                    hint: Text('Select Task'),
+                    value: selectedProjectId,
+                    onChanged: (String? projectId) {
+                      setState(() {
+                        selectedProjectId = projectId!;
+                        isTaskSelected = true;
+                        _textFieldFocusNode.requestFocus();
+                      });
+                      print(selectedProjectId);
+                    },
+                    items:
+                        userProjects.map<DropdownMenuItem<String>>((project) {
+                      return DropdownMenuItem<String>(
+                        value: project['id'].toString(),
+                        child: Text(project['project']['name'] +
+                            ' / ' +
+                            project['name']),
+                      );
+                    }).toList(),
+                  ),
+                ),
+                Visibility(
+                  visible: isTaskSelected,
+                  child: Column(
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(bottom: 10),
+                        child: TextField(
+                          controller: _textHoursController,
+                          focusNode: _textFieldFocusNode,
+                          maxLines: 1,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            hintText: 'Time',
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
                       ),
-                    );
-                  }).toList();
-                },
-                items: userProjects.map<DropdownMenuItem<String>>((project) {
-                  return DropdownMenuItem<String>(
-                    value: project['id'].toString(),
-                    child: Text(
-                        project['project']['name'] + ' / ' + project['name']),
-                  );
-                }).toList(),
-              ),
+                      Container(
+                        margin: EdgeInsets.only(bottom: 10),
+                        child: TextField(
+                          controller: _textEditingController,
+                          maxLines: 10,
+                          keyboardType: TextInputType.multiline,
+                          decoration: InputDecoration(
+                            hintText: 'Report',
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                      ),
+                      ElevatedButton(
+                        child: Text('Add report'),
+                        onPressed: () {
+                          print(_textEditingController);
+                        },
+                      )
+                    ],
+                  ),
+                ),
+              ],
             ),
-            ElevatedButton(
-              onPressed: () {
-                // Действие, которое должно произойти при выборе проекта
-                print('Выбран проект с id: $selectedProjectId');
-              },
-              child: Text('Select'),
-            ),
-          ],
+          ),
         ),
       ),
     );

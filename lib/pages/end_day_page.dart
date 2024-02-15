@@ -21,11 +21,11 @@ class _EndDayState extends State<EndDay> {
   late Map<String, dynamic> startDayData = {};
   List<dynamic> reports = [];
   String formatSeconds(int seconds) {
-    int hours = seconds ~/ 3600; // Делим на 3600 (количество секунд в часе)
-    int minutes = (seconds % 3600) ~/
-        60; // Делим оставшиеся секунды на 60 (количество секунд в минуте)
+    int hours = seconds ~/ 3600;
+    int minutes = (seconds % 3600) ~/ 60; 
     return '$hours h. $minutes min.';
   }
+
   @override
   void initState() {
     super.initState();
@@ -139,7 +139,7 @@ class _EndDayState extends State<EndDay> {
                                             Row(
                                               children: [
                                                 Text(
-                                                    '${item['task']['project_name']}  /  ${item['task']['name']}'),
+                                                    '${item['task']['tag']} / ${item['task']['project_name']}  /  ${item['task']['name']}'),
                                               ],
                                             ),
                                             Row(
@@ -198,7 +198,9 @@ class _EndDayState extends State<EndDay> {
                               .map<DropdownMenuItem<String>>((project) {
                             return DropdownMenuItem<String>(
                               value: project['id'].toString(),
-                              child: Text(project['project']['name'] +
+                              child: Text(project['tag'] +
+                                  ' / ' +
+                                  project['project']['name'] +
                                   ' / ' +
                                   project['name']),
                             );

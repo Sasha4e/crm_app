@@ -1,10 +1,11 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, prefer_const_constructors, must_be_immutable
 
 import 'dart:convert';
-
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_crm/api/api_interceptors.dart';
 import 'package:flutter_crm/storage/user_storage.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 class EndDay extends StatefulWidget {
   @override
@@ -25,18 +26,22 @@ class _EndDayState extends State<EndDay> {
     int minutes = (seconds % 3600) ~/ 60; 
     return '$hours h. $minutes min.';
   }
+  
 
   @override
   void initState() {
     super.initState();
     _textFieldFocusNode = FocusNode();
+    initializeDateFormatting('en', null); // Инициализация данных локал
     fetchData();
     checkAddedTasks();
+    
   }
 
   void dispose() {
     _textFieldFocusNode.dispose();
     super.dispose();
+    
   }
 
   TextEditingController _textEditingController = TextEditingController();
@@ -67,6 +72,16 @@ class _EndDayState extends State<EndDay> {
     } catch (e) {
       print('Error: $e');
     }
+  }
+  
+
+//FORMAT DATE
+
+  String formatDateString(String dateString) {
+    DateTime date = DateTime.parse(dateString);
+    String formattedDate = DateFormat('dd MMM', 'en').format(date);
+
+    return formattedDate;
   }
 
   Future<void> checkAddedTasks() async {
@@ -144,8 +159,8 @@ class _EndDayState extends State<EndDay> {
                                             ),
                                             Row(
                                               children: [
-                                                Text(formatSeconds(
-                                                    item['seconds']))
+                                                Text(
+                                                    '${formatDateString(item['date'])} / ${(formatSeconds(item['seconds']))}'),
                                               ],
                                             )
                                           ],

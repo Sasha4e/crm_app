@@ -97,9 +97,9 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: startedWork
-              ? [
+          children: [
                   SizedBox(height: 20),
+          if (startDayData['data'] != null)
                   Text(
                     'Hello, ${userData['user_name']}',
                     style: TextStyle(
@@ -107,12 +107,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         color: const Color.fromARGB(255, 1, 61, 32),
                         fontWeight: FontWeight.bold),
                   ),
-                  Padding(
+          startDayData['data'] != null
+              ? Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
                       children: [
-                        startDayData['data'] != null
-                            ? Container(
+                      Container(
                                 margin: EdgeInsets.only(bottom: 10.0),
                                 child: Column(
                                   children: [
@@ -135,13 +135,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                       child: Text('End day'),
                                     )
                                   ],
-                                ),
-                              )
-                            : Container(),
-                      ],
-                    ),
-                  ),
-                  if (startDayData['data'] == null)
+                        ),
+                      ),
+                      if (startDayData['data'] == null)
                     ElevatedButton(
                       onPressed: () async {
                         try {
@@ -165,8 +161,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                       child: Text('Start day'),
                     ),
+                    ],
+                  ),
+                )
+              : CircularProgressIndicator(),
+         
                 ]
-              : [CircularProgressIndicator()],
+              
         ),
       ),
     );

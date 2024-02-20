@@ -134,44 +134,60 @@ class _EndDayState extends State<EndDay> {
                               ),
                             ),
                             Container(
+                                      constraints: BoxConstraints(
+                                          maxWidth: MediaQuery.of(context)
+                                              .size
+                                              .width),
                                 child: Column(
-                              children: reports.map((item) {
+                                        children: reports.map((item) {
                                 return Row(
                                   children: [
                                     Expanded(
-                                      child: Container(
-                                        margin: EdgeInsets.only(bottom: 5),
-                                        padding: EdgeInsets.all(10),
-                                        decoration: BoxDecoration(
-                                          border:
-                                              Border.all(color: Colors.grey),
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Row(
-                                              children: [
-                                                Text(
-                                                    '${item['task']['tag']} / ${item['task']['project_name']}  /  ${item['task']['name']}'),
-                                              ],
-                                            ),
-                                            Row(
-                                              children: [
-                                                Text(
-                                                    '${formatDateString(item['date'])} / ${(formatSeconds(item['seconds']))}'),
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    ),
+                                                child: Container(
+                                                  margin: EdgeInsets.only(
+                                                      bottom: 5),
+                                                  padding: EdgeInsets.all(10),
+                                                  decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                        color: Colors.grey),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                  ),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Container(
+                                                        constraints:
+                                                            BoxConstraints(
+                                                                maxWidth: 220),
+                                                        child: Text(
+                                                          '${item['task']['tag']} / ${item['task']['project_name']}  /  ${item['task']['name']}',
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          maxLines: 1,
+                                                          softWrap: false,
+                                                        ),
+                                                      ),
+                                                      Row(
+                                                        children: [
+                                                          Text(
+                                                            '${formatDateString(item['date'])} / ${(formatSeconds(item['seconds']))}',
+                                                          ),
+                                                        ],
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+
+
                                   ],
                                 );
                               }).toList(), // Преобразуем Iterable в список виджетов
-                            )),
+                                      )),
                           ],
                               )
                             : Container(child: SizedBox(height: 11)

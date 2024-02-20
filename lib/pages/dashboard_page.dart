@@ -8,6 +8,7 @@ import 'package:flutter_crm/components/drawer.dart';
 import 'package:flutter_crm/pages/end_day_page.dart';
 import 'package:flutter_crm/pages/login_page.dart';
 import 'package:flutter_crm/storage/user_storage.dart';
+import 'package:intl/intl.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -18,7 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
   late Map<String, dynamic> userData = {'user_name': 'Loading...'};
   bool startedWork = false;
   late Map<String, dynamic> startDayData = {};
-
+  var formatedStartDayData;
   @override
   void initState() {
     super.initState();
@@ -58,6 +59,13 @@ class _HomeScreenState extends State<HomeScreen> {
         if (jsonResponse['data'] != null) {
           setState(() {
             startDayData = jsonResponse;
+            // Получаем время начала работы и преобразуем в объект DateTime
+            DateTime startTime = DateTime.parse(startDayData['data']['start']);
+            // Применяем часовой пояс и форматируем время в нужный формат
+            startTime = startTime.toLocal();
+            String formattedTime = DateFormat('HH:mm').format(startTime);
+            // Обновляем startDayData с отформатированным временем
+            formatedStartDayData = formattedTime;
             startedWork = true;
           });
           print(startDayData['data']);
@@ -95,80 +103,78 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       drawer: CustomDrawer(),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-                  SizedBox(height: 20),
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          SizedBox(height: 20),
           if (startDayData['data'] != null)
-                  Text(
-                    'Hello, ${userData['user_name']}',
-                    style: TextStyle(
-                        fontSize: 25,
-                        color: const Color.fromARGB(255, 1, 61, 32),
-                        fontWeight: FontWeight.bold),
-                  ),
-          startDayData['data'] != null
+            Text(
+              'Hello, ${userData['user_name']}',
+              style: TextStyle(
+                  fontSize: 25,
+                  color: const Color.fromARGB(255, 1, 61, 32),
+                  fontWeight: FontWeight.bold),
+            ),
+          formatedStartDayData != null
               ? Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      children: [
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
                       Container(
-                                margin: EdgeInsets.only(bottom: 10.0),
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      'You started your work\n today at ${startDayData['data']['start'].split(' ')[1]}.',
-                                      style: TextStyle(
-                                          fontSize: 20,
-                                          color: const Color.fromARGB(
-                                              255, 56, 21, 8)),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    EndDay()));
-                                      },
-                                      child: Text('End day'),
-                                    )
-                                  ],
+                        margin: EdgeInsets.only(bottom: 10.0),
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 45),
+                              child: Text(
+                                'You started your work\n today at ${formatedStartDayData.toString()}.',
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    color: Color(0xFF030332)),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => EndDay()));
+                              },
+                              child: Text('End day'),
+                            )
+                          ],
                         ),
                       ),
                       if (startDayData['data'] == null)
-                    ElevatedButton(
-                      onPressed: () async {
-                        try {
-                          var response = await ApiClient.post('work/start', {});
-                          if (response.statusCode == 201) {
-                            setState(() {
-                              startDayData = json.decode(response.body)['data'];
-                            });
-                            var jsonResponse = json.decode(response.body);
-                            startDayData = jsonResponse['data'];
-                            checkWorkDay();
-                            print('response: ${startDayData}');
-                          } else {
-                            print(
-                                'Failed to fetch user data. Status code: ${response.statusCode}');
-                            print('Response body: ${response.body}');
-                          }
-                        } catch (e) {
-                          print('Error: $e');
-                        }
-                      },
-                      child: Text('Start day'),
-                    ),
+                        ElevatedButton(
+                          onPressed: () async {
+                            try {
+                              var response =
+                                  await ApiClient.post('work/start', {});
+                              if (response.statusCode == 201) {
+                                setState(() {
+                                  startDayData =
+                                      json.decode(response.body)['data'];
+                                });
+                                var jsonResponse = json.decode(response.body);
+                                startDayData = jsonResponse['data'];
+                                checkWorkDay();
+                                print('response: ${startDayData}');
+                              } else {
+                                print(
+                                    'Failed to fetch user data. Status code: ${response.statusCode}');
+                                print('Response body: ${response.body}');
+                              }
+                            } catch (e) {
+                              print('Error: $e');
+                            }
+                          },
+                          child: Text('Start day'),
+                        ),
                     ],
                   ),
                 )
               : CircularProgressIndicator(),
-         
-                ]
-              
-        ),
+        ]),
       ),
     );
   }

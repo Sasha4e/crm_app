@@ -1,7 +1,9 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:convert';
+
 import 'package:http/http.dart' as http;
-import 'package:flutter/material.dart'; 
+import 'package:flutter/material.dart';
 import 'package:flutter_crm/storage/token_storage.dart';
 import 'package:flutter_crm/pages/login_page.dart';
 
@@ -55,6 +57,25 @@ class ApiClient {
       url,
       headers: {'Authorization': 'Bearer $accessToken'},
       body: data,
+    );
+  }
+
+  static Future<http.Response> postList(
+      String endpoint, List<dynamic> data) async {
+    String? accessToken = await TokenStorage.getToken();
+    var url = Uri.parse('$baseUrl/$endpoint');
+
+    // Преобразовываем данные в формат JSON
+    String jsonBody = json.encode({'report': data});
+
+    return http.post(
+      url,
+      headers: {
+        'Authorization': 'Bearer $accessToken',
+        'Content-Type':
+            'application/json', // Указываем, что отправляем данные в формате JSON
+      },
+      body: jsonBody,
     );
   }
 }

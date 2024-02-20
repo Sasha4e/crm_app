@@ -1,11 +1,13 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, prefer_const_constructors, must_be_immutable
 
 import 'dart:convert';
+import 'package:flutter_crm/storage/token_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_crm/api/api_interceptors.dart';
 import 'package:flutter_crm/storage/user_storage.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 
 class EndDay extends StatefulWidget {
   @override
@@ -16,6 +18,7 @@ class _EndDayState extends State<EndDay> {
   var userProjects = [];
   bool isProjectChosen = false;
   var selectedProjectId;
+  bool isAddedTasksLoaded = false;
   bool isTaskSelected = false;
   late FocusNode _textFieldFocusNode;
   bool startedWork = false;
@@ -23,10 +26,9 @@ class _EndDayState extends State<EndDay> {
   List<dynamic> reports = [];
   String formatSeconds(int seconds) {
     int hours = seconds ~/ 3600;
-    int minutes = (seconds % 3600) ~/ 60; 
+    int minutes = (seconds % 3600) ~/ 60;
     return '$hours h. $minutes min.';
   }
-  
 
   @override
   void initState() {
@@ -35,17 +37,16 @@ class _EndDayState extends State<EndDay> {
     initializeDateFormatting('en', null); // Инициализация данных локал
     fetchData();
     checkAddedTasks();
-    
   }
 
   void dispose() {
     _textFieldFocusNode.dispose();
     super.dispose();
-    
   }
 
   TextEditingController _textEditingController = TextEditingController();
   TextEditingController _textHoursController = TextEditingController();
+  TextEditingController _textMinutesController = TextEditingController();
 
   Future<void> fetchData() async {
     try {
@@ -61,6 +62,7 @@ class _EndDayState extends State<EndDay> {
 
           setState(() {
             userProjects = jsonResponse['data'];
+            isAddedTasksLoaded = true;
           });
         } else {
           print(
@@ -73,7 +75,6 @@ class _EndDayState extends State<EndDay> {
       print('Error: $e');
     }
   }
-  
 
 //FORMAT DATE
 
@@ -120,10 +121,11 @@ class _EndDayState extends State<EndDay> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 //ADDED TASKS
-                reports.length > 0
+                isAddedTasksLoaded
                     ? Container(
                         margin: EdgeInsets.only(bottom: 45),
-                        child: Column(
+                        child: reports.isNotEmpty
+                            ? Column(
                           children: [
                             Container(
                               margin: EdgeInsets.only(bottom: 5),
@@ -172,7 +174,9 @@ class _EndDayState extends State<EndDay> {
                               }).toList(), // Преобразуем Iterable в список виджетов
                             )),
                           ],
-                        ),
+                              )
+                            : Container(child: SizedBox(height: 11)
+                              ),
                       )
                     : Container(
                         margin: EdgeInsets.only(bottom: 20),
@@ -226,28 +230,44 @@ class _EndDayState extends State<EndDay> {
                   ],
                 ),
 
-              
-
-
-
-
-
                 Visibility(
                   visible: isTaskSelected,
                   child: Column(
                     children: [
-                      Container(
-                        margin: EdgeInsets.only(bottom: 10),
-                        child: TextField(
-                          controller: _textHoursController,
-                          focusNode: _textFieldFocusNode,
-                          maxLines: 1,
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                            hintText: 'Hours',
-                            border: OutlineInputBorder(),
+                      Row(
+                        children: [
+                          Expanded(
+                            // Используйте Expanded для первого TextField
+                            child: Container(
+                              margin: EdgeInsets.only(right: 5, bottom: 10),
+                              child: TextField(
+                                controller: _textHoursController,
+                                focusNode: _textFieldFocusNode,
+                                maxLines: 1,
+                                keyboardType: TextInputType.number,
+                                decoration: InputDecoration(
+                                  hintText: 'Hours',
+                                  border: OutlineInputBorder(),
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
+                          Expanded(
+                            // Используйте Expanded для второго TextField
+                            child: Container(
+                              margin: EdgeInsets.only(bottom: 10),
+                              child: TextField(
+                                controller: _textMinutesController,
+                                maxLines: 1,
+                                keyboardType: TextInputType.number,
+                                decoration: InputDecoration(
+                                  hintText: 'Minutes',
+                                  border: OutlineInputBorder(),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       Container(
                         margin: EdgeInsets.only(bottom: 10),
@@ -261,15 +281,123 @@ class _EndDayState extends State<EndDay> {
                           ),
                         ),
                       ),
-                      ElevatedButton(
-                        child: Text('Add report'),
-                        onPressed: () {
-                          print(_textEditingController);
-                        },
-                      )
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          ElevatedButton(
+                            child: Text('Add report'),
+                            onPressed: () async {
+                              int hours =
+                                  int.tryParse(_textHoursController.text) ?? 0;
+                              int minutes =
+                                  int.tryParse(_textMinutesController.text) ??
+                                      0;
+                              int hoursInSeconds = hours * 3600;
+                              int minutesInSeconds = minutes * 60;
+                              int totalSeconds =
+                                  hoursInSeconds + minutesInSeconds;
+                              print(
+                                  '${_textEditingController} ${selectedProjectId}');
+                              print('Total seconds: $totalSeconds');
+                              //Get todays date
+                              DateTime now = DateTime.now();
+                              String formattedDate =
+                                  DateFormat('yyyy-MM-dd').format(now);
+                              Map<String, dynamic> data = {
+                                'date': formattedDate,
+                                'report': _textEditingController.text,
+                                'seconds': totalSeconds.toString(),
+                                'task_id': selectedProjectId
+                              };
+
+                              var response =
+                                  await ApiClient.post('work/reports', data);
+
+                              if (response.statusCode == 201) {
+                                var jsonResponse = json.decode(response.body);
+
+                                print('jsonResponse: $jsonResponse');
+                                _textEditingController.clear();
+                                _textHoursController.clear();
+                                _textMinutesController.clear();
+                                isTaskSelected = false;
+                                setState(() {
+                                  selectedProjectId = null;
+                                });
+                                checkAddedTasks();
+                              } else {
+                                print(
+                                    'Failed to authenticate. Status code: ${response.statusCode}');
+                                print('Response body: ${response.body}');
+                              }
+                            },
+                          ),
+                          ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  primary:
+                                      const Color.fromARGB(255, 1, 77, 139)),
+                              child: Text('Cancel',
+                                  style: TextStyle(color: Colors.white)),
+                              onPressed: () {
+                                setState(() {
+                                  isTaskSelected = false;
+                                });
+                              })
+                        ],
+                      ),
                     ],
                   ),
                 ),
+                Visibility(
+                    visible: reports.isNotEmpty && !isTaskSelected,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                primary: const Color.fromARGB(255, 1, 77, 139)),
+                            onPressed: () async {
+                              Map<String, List<dynamic>> data = {
+                                'reports': reports
+                              };
+                              String jsonData = json.encode(
+                                  data); // Преобразуем карту в строку JSON
+
+// Затем декодируем строку JSON обратно в карту
+                              Map<String, dynamic> decodedData =
+                                  json.decode(jsonData);
+
+                              print(reports.runtimeType);
+                              print('!-!-!-!-!-!-!-!-!!_-!-');
+                              print(reports);
+                              print('!-!-!-!-!-!-!-!-!!_-!-');
+
+                              var response =
+                                  await ApiClient.post('work/end', decodedData);
+
+                              if (response.statusCode == 200) {
+                                var jsonResponse = json.decode(response.body);
+
+                                print('jsonResponse: $jsonResponse');
+                                _textEditingController.clear();
+                                _textHoursController.clear();
+                                _textMinutesController.clear();
+                                isTaskSelected = false;
+                                setState(() {
+                                  selectedProjectId = null;
+                                });
+                                checkAddedTasks();
+                                print('Day ended');
+                              } else {
+                                print(
+                                    'Failed to authenticate. Status code: ${response.statusCode}');
+                                print('Response body: ${response.body}');
+                              }
+                            },
+                            child: Text('End Day',
+                                style: TextStyle(color: Colors.white))),
+                      ],
+                    ))
               ],
             ),
           ),

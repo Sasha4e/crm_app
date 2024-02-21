@@ -50,13 +50,17 @@ class ApiClient {
     );
   }
 
-  static Future<http.Response> post(String endpoint, dynamic data) async {
+  static Future<http.Response> post(
+      String endpoint, Map<String, dynamic> data) async {
     String? accessToken = await TokenStorage.getToken();
     var url = Uri.parse('$baseUrl/$endpoint');
     return http.post(
       url,
-      headers: {'Authorization': 'Bearer $accessToken'},
-      body: data,
+      headers: {
+        'Authorization': 'Bearer $accessToken',
+        'Content-Type': 'application/json',
+      },
+      body: json.encode(data),
     );
   }
 
@@ -64,18 +68,12 @@ class ApiClient {
       String endpoint, List<dynamic> data) async {
     String? accessToken = await TokenStorage.getToken();
     var url = Uri.parse('$baseUrl/$endpoint');
-
-    // Преобразовываем данные в формат JSON
-    String jsonBody = json.encode({'report': data});
-
     return http.post(
       url,
       headers: {
         'Authorization': 'Bearer $accessToken',
-        'Content-Type':
-            'application/json', // Указываем, что отправляем данные в формате JSON
       },
-      body: jsonBody,
+      
     );
   }
 }

@@ -1,12 +1,12 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, prefer_const_constructors, must_be_immutable
+// ignore_for_file: prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, prefer_const_constructors, must_be_immutable, use_build_context_synchronously
 
 import 'dart:convert';
+import 'package:flutter_crm/pages/dashboard_page.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_crm/api/api_interceptors.dart';
 import 'package:flutter_crm/storage/user_storage.dart';
 import 'package:intl/date_symbol_data_local.dart';
-
 
 class EndDay extends StatefulWidget {
   @override
@@ -125,24 +125,25 @@ class _EndDayState extends State<EndDay> {
                         margin: EdgeInsets.only(bottom: 45),
                         child: reports.isNotEmpty
                             ? Column(
-                          children: [
-                            Container(
-                              margin: EdgeInsets.only(bottom: 5),
-                              child: Text(
-                                'Already added reports:',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                            Container(
+                                children: [
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: 5),
+                                    child: Text(
+                                      'Already added reports:',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  Container(
                                       constraints: BoxConstraints(
                                           maxWidth: MediaQuery.of(context)
                                               .size
                                               .width),
-                                child: Column(
+                                      child: Column(
                                         children: reports.map((item) {
-                                return Row(
-                                  children: [
-                                    Expanded(
+                                          return Row(
+                                            children: [
+                                              Expanded(
                                                 child: Container(
                                                   margin: EdgeInsets.only(
                                                       bottom: 5),
@@ -182,16 +183,13 @@ class _EndDayState extends State<EndDay> {
                                                   ),
                                                 ),
                                               ),
-
-
-                                  ],
-                                );
-                              }).toList(), // Преобразуем Iterable в список виджетов
+                                            ],
+                                          );
+                                        }).toList(), // Преобразуем Iterable в список виджетов
                                       )),
-                          ],
+                                ],
                               )
-                            : Container(child: SizedBox(height: 11)
-                              ),
+                            : Container(child: SizedBox(height: 11)),
                       )
                     : Container(
                         margin: EdgeInsets.only(bottom: 20),
@@ -300,6 +298,17 @@ class _EndDayState extends State<EndDay> {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  primary:
+                                      const Color.fromARGB(255, 1, 77, 139)),
+                              child: Text('Cancel',
+                                  style: TextStyle(color: Colors.white)),
+                              onPressed: () {
+                                setState(() {
+                                  isTaskSelected = false;
+                                });
+                              }),
+                          ElevatedButton(
                             child: Text('Add report'),
                             onPressed: () async {
                               int hours =
@@ -347,17 +356,6 @@ class _EndDayState extends State<EndDay> {
                               }
                             },
                           ),
-                          ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  primary:
-                                      const Color.fromARGB(255, 1, 77, 139)),
-                              child: Text('Cancel',
-                                  style: TextStyle(color: Colors.white)),
-                              onPressed: () {
-                                setState(() {
-                                  isTaskSelected = false;
-                                });
-                              })
                         ],
                       ),
                     ],
@@ -370,25 +368,12 @@ class _EndDayState extends State<EndDay> {
                       children: [
                         ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                primary: const Color.fromARGB(255, 1, 77, 139)),
+                                backgroundColor:
+                                    const Color.fromARGB(255, 1, 77, 139)),
                             onPressed: () async {
-                              Map<String, List<dynamic>> data = {
-                                'reports': reports
-                              };
-                              String jsonData = json.encode(
-                                  data); // Преобразуем карту в строку JSON
-
-// Затем декодируем строку JSON обратно в карту
-                              Map<String, dynamic> decodedData =
-                                  json.decode(jsonData);
-
-                              print(reports.runtimeType);
-                              print('!-!-!-!-!-!-!-!-!!_-!-');
-                              print(reports);
-                              print('!-!-!-!-!-!-!-!-!!_-!-');
-
+                             
                               var response =
-                                  await ApiClient.post('work/end', decodedData);
+                                  await ApiClient.postList('work/end', reports);
 
                               if (response.statusCode == 200) {
                                 var jsonResponse = json.decode(response.body);
@@ -403,6 +388,10 @@ class _EndDayState extends State<EndDay> {
                                 });
                                 checkAddedTasks();
                                 print('Day ended');
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => HomeScreen()));
                               } else {
                                 print(
                                     'Failed to authenticate. Status code: ${response.statusCode}');

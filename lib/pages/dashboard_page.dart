@@ -20,6 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool startedWork = false;
   late Map<String, dynamic> startDayData = {};
   var formatedStartDayData;
+  bool isDayFetched = false;
   @override
   void initState() {
     super.initState();
@@ -35,8 +36,8 @@ class _HomeScreenState extends State<HomeScreen> {
           userData = jsonResponse['data'];
           startedWork = true;
         });
-        await checkWorkDay();
         await UserStorage.saveUserData(userData);
+        await checkWorkDay();
         print('UserData: ${UserStorage.getUserData()}');
       } else {
         print('Failed to fetch user data. Status code: ${response.statusCode}');
@@ -70,7 +71,11 @@ class _HomeScreenState extends State<HomeScreen> {
           });
           print(startDayData['data']);
         }
+        setState(() {
+          isDayFetched = true;
+        });
       } else {
+        isDayFetched = true;
         print(
             'Failed to fetch today\'s work data. Status code: ${response.statusCode}');
         print('Response body: ${response.body}');
@@ -105,7 +110,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Center(
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           SizedBox(height: 20),
-          if (startDayData['data'] != null)
+          if (isDayFetched)
             Text(
               'Hello, ${userData['user_name']}',
               style: TextStyle(
@@ -113,7 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   color: const Color.fromARGB(255, 1, 61, 32),
                   fontWeight: FontWeight.bold),
             ),
-          formatedStartDayData != null
+          isDayFetched == true
               ? Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
@@ -122,16 +127,17 @@ class _HomeScreenState extends State<HomeScreen> {
                         margin: EdgeInsets.only(bottom: 10.0),
                         child: Column(
                           children: [
+                            if (startDayData['data'] != null)
                             Padding(
                               padding: const EdgeInsets.only(bottom: 45),
                               child: Text(
                                 'You started your work\n today at ${formatedStartDayData.toString()}.',
                                 style: TextStyle(
-                                    fontSize: 20,
-                                    color: Color(0xFF030332)),
+                                      fontSize: 20, color: Color(0xFF030332)),
                                 textAlign: TextAlign.center,
                               ),
                             ),
+                            if (startDayData['data'] != null)
                             ElevatedButton(
                               onPressed: () {
                                 Navigator.push(
@@ -174,6 +180,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 )
               : CircularProgressIndicator(),
+          // : Text('xyinya')
         ]),
       ),
     );

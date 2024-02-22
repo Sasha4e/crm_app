@@ -138,14 +138,43 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
                             if (startDayData['data'] != null)
-                            ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => EndDay()));
-                              },
-                              child: Text('End day'),
+                              startDayData['data']['end'] != null
+                                  ? ElevatedButton(
+                                      onPressed: () async {
+                                        try {
+                                          var response = await ApiClient.post(
+                                              'work/resume', {});
+                                          if (response.statusCode == 200) {
+                                            setState(() {
+                                              startDayData = json.decode(
+                                                  response.body)['data'];
+                                            });
+                                            var jsonResponse =
+                                                json.decode(response.body);
+                                            startDayData = jsonResponse['data'];
+                                            checkWorkDay();
+                                            print('response: ${startDayData}');
+                                          } else {
+                                            print(
+                                                'Failed to fetch user data. Status code: ${response.statusCode}');
+                                            print(
+                                                'Response body: ${response.body}');
+                                          }
+                                        } catch (e) {
+                                          print('Error: $e');
+                                        }
+                                      },
+                                      child: Text('Resume day'),
+                                    )
+                                  : ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    EndDay()));
+                                      },
+                                      child: Text('End day'),
                             )
                           ],
                         ),

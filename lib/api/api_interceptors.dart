@@ -64,16 +64,5 @@ class ApiClient {
     );
   }
 
-  static Future<http.Response> postList(
-      String endpoint, List<dynamic> data) async {
-    String? accessToken = await TokenStorage.getToken();
-    var url = Uri.parse('$baseUrl/$endpoint');
-    return http.post(
-      url,
-      headers: {
-        'Authorization': 'Bearer $accessToken',
-      },
-      
-    );
-  }
+  
 }

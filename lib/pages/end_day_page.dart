@@ -371,9 +371,8 @@ class _EndDayState extends State<EndDay> {
                                 backgroundColor:
                                     const Color.fromARGB(255, 1, 77, 139)),
                             onPressed: () async {
-                             
                               var response =
-                                  await ApiClient.postList('work/end', reports);
+                                  await ApiClient.post('work/end', {});
 
                               if (response.statusCode == 200) {
                                 var jsonResponse = json.decode(response.body);

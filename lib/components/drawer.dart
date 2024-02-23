@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_crm/pages/login_page.dart';
+import 'package:flutter_crm/pages/profile_page.dart';
 import 'package:flutter_crm/pages/team_page.dart';
 import 'package:flutter_crm/pages/wiki_page.dart';
 import 'package:flutter_crm/storage/token_storage.dart';
@@ -25,12 +26,14 @@ class CustomDrawer extends StatelessWidget {
               ),
             ),
           ),
+
+          
           Padding(
             padding: const EdgeInsets.only(left: 25.0),
             child: ListTile(
-              leading: Icon(Icons.question_mark, color: Colors.white),
+              leading: Icon(Icons.person, color: Colors.white),
               title: Text(
-                'Wiki',
+                'Profile',
                 style: TextStyle(color: Colors.white), 
               ),
               onTap: () {
@@ -38,17 +41,17 @@ class CustomDrawer extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => WikiPage(),
+                    builder: (context) => ProfilePage(),
                   ),
                 );
               },
             ),
-
           ),
+          
           Padding(
             padding: const EdgeInsets.only(left: 25.0),
             child: ListTile(
-              leading: Icon(Icons.person, color: Colors.white),
+              leading: Icon(Icons.group, color: Colors.white),
               title: Text(
                 'Team',
                 style: TextStyle(color: Colors.white),
@@ -64,6 +67,28 @@ class CustomDrawer extends StatelessWidget {
               },
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.only(left: 25.0),
+            child: ListTile(
+              leading: Icon(Icons.question_mark, color: Colors.white),
+              title: Text(
+                'Wiki',
+                style: TextStyle(color: Colors.white),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => WikiPage(),
+                  ),
+                );
+              },
+            ),
+          ),
+
+
+
           Expanded(
             child: SizedBox(), 
           ),

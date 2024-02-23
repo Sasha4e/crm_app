@@ -21,6 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool startedWork = false;
   late Map<String, dynamic> startDayData = {};
   var formattedStartDayData;
+  var formattedEndDayData;
   bool isDayFetched = false;
 
   // Глобальный ключ для виджета WhoOnline
@@ -68,6 +69,14 @@ class _HomeScreenState extends State<HomeScreen> {
             startTime = startTime.toLocal();
             String formattedTime = DateFormat('HH:mm').format(startTime);
             formattedStartDayData = formattedTime;
+
+            if (startDayData['data']['end'] != null) {
+              DateTime endTime = DateTime.parse(startDayData['data']['end']);
+              endTime = startTime.toLocal();
+              String formattedTime = DateFormat('HH:mm').format(endTime);
+              formattedEndDayData = formattedTime;
+            }
+
             startedWork = true;
           });
         }
@@ -144,7 +153,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                       padding:
                                           const EdgeInsets.only(bottom: 45),
                                       child: Text(
-                                        'You started your work\n today at ${formattedStartDayData.toString()}.',
+                                        startDayData['data']['end'] != null
+                                            ? 'You ended your work\n today at ${formattedEndDayData.toString()}.'
+                                            : 'You started your work\n today at ${formattedStartDayData.toString()}.',
                                         style: TextStyle(
                                           fontSize: 20,
                                           color: Color(0xFF030332),
@@ -157,7 +168,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ? ElevatedButton(
                                             onPressed: () async {
                                               // getOnlineUsers() from WhoOnline
-                                              _callGetOnlineUsers();
+                                              
                                               try {
                                                 var response =
                                                     await ApiClient.post(
@@ -172,6 +183,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       .decode(response.body);
                                                   startDayData =
                                                       jsonResponse['data'];
+                                                  _callGetOnlineUsers();
                                                   checkWorkDay();
                                                   print(
                                                       'response: ${startDayData}');
@@ -205,7 +217,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ElevatedButton(
                                 onPressed: () async {
                                   // Вызов метода getOnlineUsers() из WhoOnline
-                                  
+
                                   try {
                                     var response =
                                         await ApiClient.post('work/start', {});

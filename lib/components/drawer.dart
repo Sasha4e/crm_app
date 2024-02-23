@@ -6,7 +6,7 @@ import 'package:flutter_crm/pages/profile_page.dart';
 import 'package:flutter_crm/pages/team_page.dart';
 import 'package:flutter_crm/pages/wiki_page.dart';
 import 'package:flutter_crm/storage/token_storage.dart';
-
+import 'package:lottie/lottie.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({Key? key});
@@ -19,12 +19,12 @@ class CustomDrawer extends StatelessWidget {
         children: [
           DrawerHeader(
             child: Padding(
-              padding: const EdgeInsets.all(50.0),
-              child: Text(
-                'CRM',
-                style: TextStyle(color: Colors.white, fontSize: 30),
-              ),
-            ),
+                padding: const EdgeInsets.only(bottom: 50.0),
+                child: Lottie.asset(
+                  'lib/animations/astronot.json',
+                  width: 180,
+                  fit: BoxFit.cover,
+                )),
           ),
 
           

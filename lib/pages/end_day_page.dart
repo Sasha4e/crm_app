@@ -339,7 +339,11 @@ class _EndDayState extends State<EndDay> {
 
                               if (response.statusCode == 201) {
                                 var jsonResponse = json.decode(response.body);
-
+final snackBar = SnackBar(
+                                    content: Text('Added!'),
+                                    behavior: SnackBarBehavior.floating);
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackBar);
                                 print('jsonResponse: $jsonResponse');
                                 _textEditingController.clear();
                                 _textHoursController.clear();

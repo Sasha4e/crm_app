@@ -21,8 +21,8 @@ class CustomDrawer extends StatelessWidget {
             child: Padding(
                 padding: const EdgeInsets.only(bottom: 50.0),
                 child: Lottie.asset(
-                  'lib/animations/astronot.json',
-                  width: 180,
+                  'lib/animations/rocket.json',
+                  width: 130,
                   fit: BoxFit.cover,
                 )),
           ),

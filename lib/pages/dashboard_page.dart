@@ -10,6 +10,7 @@ import 'package:flutter_crm/pages/end_day_page.dart';
 import 'package:flutter_crm/pages/login_page.dart';
 import 'package:flutter_crm/storage/user_storage.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -122,8 +123,13 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       drawer: CustomDrawer(),
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        // mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          Lottie.asset(
+            'lib/animations/astronot.json',
+            width: 250,
+            fit: BoxFit.cover,
+          ),
           WhoOnline(key: _whoOnlineKey), // Используем ключ здесь
           Center(
             child: Column(

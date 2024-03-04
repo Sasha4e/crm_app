@@ -55,7 +55,10 @@ class _ProfilePageState extends State<ProfilePage> {
       if (response.statusCode == 200) {
         setState(() {});
         var jsonResponse = json.decode(response.body);
-
+        final snackBar = SnackBar(
+            content: Text('Avatar changet'),
+            behavior: SnackBarBehavior.floating);
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
         print('response: ${jsonResponse['data']}');
         fetchData();
       } else {
@@ -150,15 +153,24 @@ class _ProfilePageState extends State<ProfilePage> {
                           bottom: 0,
                           right: 0,
                           child: IconButton(
-                            icon: Icon(
-                              Icons.edit,
-                              color: Colors.white,
+                            icon: Container(
+                              // Обертка для иконки с обводкой
+                              padding:
+                                  EdgeInsets.all(8), // Отступ внутри иконки
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white, // Цвет обводки
+                              ),
+                              child: Icon(
+                                Icons.edit,
+                                color: Colors.black, // Цвет иконки
+                              ),
                             ),
                             onPressed: () async {
                               await pickImageFromGallery();
                             },
                           ),
-                        ),
+),
                       ],
                     ),
                     TextField(
@@ -215,7 +227,11 @@ class _ProfilePageState extends State<ProfilePage> {
 
                             if (response.statusCode == 200) {
                               var jsonResponse = json.decode(response.body);
-
+                              final snackBar = SnackBar(
+                                  content: Text('Saved!'),
+                                  behavior: SnackBarBehavior.floating);
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(snackBar);
                               print('jsonResponse: $jsonResponse');
                               fetchData();
 

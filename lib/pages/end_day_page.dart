@@ -45,8 +45,9 @@ class _EndDayState extends State<EndDay> {
 
   TextEditingController _textEditingController = TextEditingController();
   TextEditingController _textHoursController = TextEditingController();
-  TextEditingController _textMinutesController = TextEditingController();
-
+  TextEditingController _textMinutesController =
+      TextEditingController(text: '0');
+  
   Future<void> fetchData() async {
     try {
       String? userDataString = await UserStorage.getUserData();

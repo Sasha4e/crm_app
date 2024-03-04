@@ -52,15 +52,19 @@ class WhoOnlineState extends State<WhoOnline> {
                 border: Border.all(color: Color(0xFF030332), width: 1),
                 borderRadius: BorderRadius.circular(10)),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: usersOnline.map((item) {
-                return Text(
-                  "${item['nickname'].toString()}, ",
-                  textAlign: TextAlign.start,
-                );
-              }).toList(),
-            )),
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: usersOnline.asMap().entries.map((entry) {
+              final index = entry.key;
+              final item = entry.value;
+
+              return Text(
+                "${item['nickname']}${index < usersOnline.length - 1 ? ', ' : ''}",
+                textAlign: TextAlign.start,
+              );
+            }).toList(),
+),
+        ),
       ],
     );
   }
